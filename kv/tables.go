@@ -20,8 +20,8 @@ import (
 	"sort"
 	"strings"
 
-	"github.com/gateway-fm/cdk-erigon-lib/gointerfaces/types"
 	"fmt"
+	"github.com/gateway-fm/cdk-erigon-lib/gointerfaces/types"
 )
 
 // DBSchemaVersion versions list
@@ -426,26 +426,29 @@ const (
 	LightClientUpdates = "LightClientUpdates"
 
 	// zkevm
-	L1VERIFICATIONS = "hermez_l1Verifications"                       // l1blockno, batchno -> l1txhash
-	L1SEQUENCES = "hermez_l1Sequences"                               // l1blockno, batchno -> l1txhash
-	FORKIDS = "hermez_forkIds"                                       // batchNo -> forkId
-	FORKID_BLOCK = "hermez_forkIdBlock"                              // forkId -> startBlock
-	BLOCKBATCHES = "hermez_blockBatches"                             // l2blockno -> batchno
-	GLOBAL_EXIT_ROOTS = "hermez_globalExitRootsSaved"                // GER -> true
-	BLOCK_GLOBAL_EXIT_ROOTS = "hermez_globalExitRoots"               // l2blockno -> GER
-	GLOBAL_EXIT_ROOTS_BATCHES = "hermez_globalExitRoots_batches"     // batchkno -> GER
-	TX_PRICE_PERCENTAGE = "hermez_txPricePercentage"                 // txHash -> txPricePercentage
-	STATE_ROOTS = "hermez_stateRoots"                                // l2blockno -> stateRoot
-	L1_INFO_TREE_UPDATES = "l1_info_tree_updates"                    // index -> L1InfoTreeUpdate
-	BLOCK_L1_INFO_TREE_INDEX = "block_l1_info_tree_index"            // block number -> l1 info tree index
-	L1_INJECTED_BATCHES = "l1_injected_batches"                      // index increasing by 1 -> injected batch for the start of the chain
-	BLOCK_INFO_ROOTS = "block_info_roots"                            // block number -> block info root hash
-	L1_BLOCK_HASHES = "l1_block_hashes"                              // l1 block hash -> true
-	BLOCK_L1_BLOCK_HASHES = "block_l1_block_hashes"                  // block number -> l1 block hash
-	L1_BLOCK_HASH_GER = "l1_block_hash_ger"                          // l1 block hash -> GER
+	L1VERIFICATIONS            = "hermez_l1Verifications"            // l1blockno, batchno -> l1txhash
+	L1SEQUENCES                = "hermez_l1Sequences"                // l1blockno, batchno -> l1txhash
+	FORKIDS                    = "hermez_forkIds"                    // batchNo -> forkId
+	FORKID_BLOCK               = "hermez_forkIdBlock"                // forkId -> startBlock
+	BLOCKBATCHES               = "hermez_blockBatches"               // l2blockno -> batchno
+	GLOBAL_EXIT_ROOTS          = "hermez_globalExitRootsSaved"       // GER -> true
+	BLOCK_GLOBAL_EXIT_ROOTS    = "hermez_globalExitRoots"            // l2blockno -> GER
+	GLOBAL_EXIT_ROOTS_BATCHES  = "hermez_globalExitRoots_batches"    // batchkno -> GER
+	TX_PRICE_PERCENTAGE        = "hermez_txPricePercentage"          // txHash -> txPricePercentage
+	STATE_ROOTS                = "hermez_stateRoots"                 // l2blockno -> stateRoot
+	L1_INFO_TREE_UPDATES       = "l1_info_tree_updates"              // index -> L1InfoTreeUpdate
+	BLOCK_L1_INFO_TREE_INDEX   = "block_l1_info_tree_index"          // block number -> l1 info tree index
+	L1_INJECTED_BATCHES        = "l1_injected_batches"               // index increasing by 1 -> injected batch for the start of the chain
+	BLOCK_INFO_ROOTS           = "block_info_roots"                  // block number -> block info root hash
+	L1_BLOCK_HASHES            = "l1_block_hashes"                   // l1 block hash -> true
+	BLOCK_L1_BLOCK_HASHES      = "block_l1_block_hashes"             // block number -> l1 block hash
+	L1_BLOCK_HASH_GER          = "l1_block_hash_ger"                 // l1 block hash -> GER
 	INTERMEDIATE_TX_STATEROOTS = "hermez_intermediate_tx_stateRoots" // l2blockno -> stateRoot
-	BATCH_WITNESSES = "hermez_batch_witnesses"                       // batch number -> witness
-	BATCH_COUNTERS = "hermez_batch_counters"                         // batch number -> counters
+	BATCH_WITNESSES            = "hermez_batch_witnesses"            // batch number -> witness
+	BATCH_COUNTERS             = "hermez_batch_counters"             // batch number -> counters
+
+	// inner tx
+	INNER_TX = "InnerTx" // block_num_u64 + txId -> inner txs of transaction
 )
 
 // Keys
@@ -614,6 +617,8 @@ var ChaindataTables = []string{
 	INTERMEDIATE_TX_STATEROOTS,
 	BATCH_WITNESSES,
 	BATCH_COUNTERS,
+
+	INNER_TX,
 }
 
 const (
