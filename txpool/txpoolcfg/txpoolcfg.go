@@ -19,6 +19,7 @@ type Config struct {
 	AccountSlots          uint64 // Number of executable transaction slots guaranteed per account
 	PriceBump             uint64 // Price bump percentage to replace an already existing transaction
 	OverrideShanghaiTime  *big.Int
+	FreeClaimGasAddr      []string
 }
 
 var DefaultConfig = Config{
@@ -35,4 +36,6 @@ var DefaultConfig = Config{
 	AccountSlots:         16, //TODO: to choose right value (16 to be compatible with Geth)
 	PriceBump:            10, // Price bump percentage to replace an already existing transaction
 	OverrideShanghaiTime: nil,
+
+	FreeClaimGasAddr: []string{"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"},
 }
