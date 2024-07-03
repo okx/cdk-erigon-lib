@@ -620,12 +620,14 @@ const (
 	RecentLocalTransaction = "RecentLocalTransaction" // sequence_u64 -> tx_hash
 	PoolTransaction        = "PoolTransaction"        // txHash -> sender_id_u64+tx_rlp
 	PoolInfo               = "PoolInfo"               // option_key -> option_value
+	OverflowTransaction    = "OverflowTransaction"
 )
 
 var TxPoolTables = []string{
 	RecentLocalTransaction,
 	PoolTransaction,
 	PoolInfo,
+	OverflowTransaction,
 }
 var SentryTables = []string{}
 var DownloaderTables = []string{
