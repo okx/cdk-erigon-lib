@@ -30,14 +30,14 @@ import (
 	"time"
 
 	"github.com/c2h5oh/datasize"
-	stack2 "github.com/go-stack/stack"
+	"github.com/erigontech/mdbx-go/mdbx"
 	"github.com/gateway-fm/cdk-erigon-lib/common/dbg"
 	"github.com/gateway-fm/cdk-erigon-lib/kv"
 	"github.com/gateway-fm/cdk-erigon-lib/kv/iter"
 	"github.com/gateway-fm/cdk-erigon-lib/kv/order"
+	stack2 "github.com/go-stack/stack"
 	"github.com/ledgerwatch/log/v3"
 	"github.com/pbnjay/memory"
-	"github.com/torquem-ch/mdbx-go/mdbx"
 	"golang.org/x/exp/maps"
 	"golang.org/x/sync/semaphore"
 )

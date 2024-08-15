@@ -22,10 +22,10 @@ import (
 	"time"
 
 	"github.com/c2h5oh/datasize"
-	"github.com/holiman/uint256"
+	mdbx2 "github.com/erigontech/mdbx-go/mdbx"
 	"github.com/gateway-fm/cdk-erigon-lib/txpool/txpoolcfg"
+	"github.com/holiman/uint256"
 	"github.com/ledgerwatch/log/v3"
-	mdbx2 "github.com/torquem-ch/mdbx-go/mdbx"
 
 	"github.com/gateway-fm/cdk-erigon-lib/chain"
 	"github.com/gateway-fm/cdk-erigon-lib/direct"

@@ -19,13 +19,13 @@ package etl
 import (
 	"bytes"
 	"fmt"
+	"github.com/ledgerwatch/log/v3"
 	"reflect"
 	"time"
 
 	"github.com/c2h5oh/datasize"
 	"github.com/gateway-fm/cdk-erigon-lib/common"
 	"github.com/gateway-fm/cdk-erigon-lib/kv"
-	"github.com/ledgerwatch/log/v3"
 )
 
 type CurrentTableReader interface {
@@ -87,7 +87,7 @@ func Transform(
 	if args.BufferSize > 0 {
 		bufferSize = datasize.ByteSize(args.BufferSize)
 	}
-	buffer := getBufferByType(args.BufferType, bufferSize)
+	buffer := getBufferByType(args.BufferType, bufferSize, nil)
 	collector := NewCollector(logPrefix, tmpdir, buffer)
 	defer collector.Close()
 

@@ -22,19 +22,43 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 
 	"github.com/ledgerwatch/log/v3"
+	"golang.org/x/sync/errgroup"
 )
 
 type dataProvider interface {
 	Next(keyBuf, valBuf []byte) ([]byte, []byte, error)
-	Dispose() uint64 // Safe for repeated call, doesn't return error - means defer-friendly
+	Dispose()    // Safe for repeated call, doesn't return error - means defer-friendly
+	Wait() error // join point for async providers
 }
 
 type fileDataProvider struct {
 	file       *os.File
 	reader     io.Reader
 	byteReader io.ByteReader // Different interface to the same object as reader
+	wg         *errgroup.Group
+}
+
+// FlushToDiskAsync - `doFsync` is true only for 'critical' collectors (which should not loose).
+func FlushToDiskAsync(logPrefix string, b Buffer, tmpdir string, doFsync bool, lvl log.Lvl) (dataProvider, error) {
+	if b.Len() == 0 {
+		return nil, nil
+	}
+
+	provider := &fileDataProvider{reader: nil, wg: &errgroup.Group{}}
+	provider.wg.Go(func() (err error) {
+		provider.file, err = sortAndFlush(b, tmpdir, doFsync)
+		if err != nil {
+			return err
+		}
+		_, fName := filepath.Split(provider.file.Name())
+		log.Log(lvl, fmt.Sprintf("[%s] Flushed buffer file", logPrefix), "name", fName)
+		return nil
+	})
+
+	return provider, nil
 }
 
 // FlushToDisk - `doFsync` is true only for 'critical' collectors (which should not loose).
@@ -42,6 +66,20 @@ func FlushToDisk(logPrefix string, b Buffer, tmpdir string, doFsync bool, lvl lo
 	if b.Len() == 0 {
 		return nil, nil
 	}
+
+	var err error
+	provider := &fileDataProvider{reader: nil, wg: &errgroup.Group{}}
+	provider.file, err = sortAndFlush(b, tmpdir, doFsync)
+	if err != nil {
+		return nil, err
+	}
+	_, fName := filepath.Split(provider.file.Name())
+	log.Log(lvl, fmt.Sprintf("[%s] Flushed buffer file", logPrefix), "name", fName)
+	return provider, nil
+}
+
+func sortAndFlush(b Buffer, tmpdir string, doFsync bool) (*os.File, error) {
+	b.Sort()
 
 	// if we are going to create files in the system temp dir, we don't need any
 	// subfolders.
@@ -55,6 +93,7 @@ func FlushToDisk(logPrefix string, b Buffer, tmpdir string, doFsync bool, lvl lo
 	if err != nil {
 		return nil, err
 	}
+
 	if doFsync {
 		defer bufferFile.Sync() //nolint:errcheck
 	}
@@ -62,16 +101,10 @@ func FlushToDisk(logPrefix string, b Buffer, tmpdir string, doFsync bool, lvl lo
 	w := bufio.NewWriterSize(bufferFile, BufIOSize)
 	defer w.Flush() //nolint:errcheck
 
-	defer func() {
-		b.Reset() // run it after buf.flush and file.sync
-		log.Log(lvl, fmt.Sprintf("[%s] Flushed buffer file", logPrefix), "name", bufferFile.Name())
-	}()
-
 	if err = b.Write(w); err != nil {
-		return nil, fmt.Errorf("error writing entries to disk: %w", err)
+		return bufferFile, fmt.Errorf("error writing entries to disk: %w", err)
 	}
-
-	return &fileDataProvider{file: bufferFile, reader: nil}, nil
+	return bufferFile, nil
 }
 
 func (p *fileDataProvider) Next(keyBuf, valBuf []byte) ([]byte, []byte, error) {
@@ -88,14 +121,14 @@ func (p *fileDataProvider) Next(keyBuf, valBuf []byte) ([]byte, []byte, error) {
 	return readElementFromDisk(p.reader, p.byteReader, keyBuf, valBuf)
 }
 
-func (p *fileDataProvider) Dispose() uint64 {
-	info, _ := os.Stat(p.file.Name())
-	_ = p.file.Close()
-	_ = os.Remove(p.file.Name())
-	if info == nil {
-		return 0
+func (p *fileDataProvider) Wait() error { return p.wg.Wait() }
+func (p *fileDataProvider) Dispose() {
+	if p.file != nil { //invariant: safe to call multiple time
+		p.Wait()
+		_ = p.file.Close()
+		_ = os.Remove(p.file.Name())
+		p.file = nil
 	}
-	return uint64(info.Size())
 }
 
 func (p *fileDataProvider) String() string {
@@ -161,9 +194,8 @@ func (p *memoryDataProvider) Next(keyBuf, valBuf []byte) ([]byte, []byte, error)
 	return key, value, nil
 }
 
-func (p *memoryDataProvider) Dispose() uint64 {
-	return 0 /* doesn't take space on disk */
-}
+func (p *memoryDataProvider) Wait() error { return nil }
+func (p *memoryDataProvider) Dispose()    {}
 
 func (p *memoryDataProvider) String() string {
 	return fmt.Sprintf("%T(buffer.Len: %d)", p, p.buffer.Len())
