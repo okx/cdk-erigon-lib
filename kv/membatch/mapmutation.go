@@ -23,6 +23,8 @@ type Mapmutation struct {
 	tmpdir string
 }
 
+var _ kv.PendingMutations = (*Mapmutation)(nil)
+
 // NewBatch - starts in-mem batch
 //
 // Common pattern:
@@ -258,4 +260,8 @@ func (m *Mapmutation) panicOnEmptyDB() {
 	if m.db == nil {
 		panic("Not implemented")
 	}
+}
+
+func (m *Mapmutation) BucketSize(table string) (uint64, error) {
+	panic("not implemented")
 }

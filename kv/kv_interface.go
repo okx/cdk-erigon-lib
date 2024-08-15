@@ -19,6 +19,7 @@ package kv
 import (
 	"context"
 	"errors"
+	"fmt"
 
 	"github.com/VictoriaMetrics/metrics"
 	"github.com/gateway-fm/cdk-erigon-lib/kv/iter"
@@ -156,6 +157,25 @@ func (l Label) String() string {
 		return "inMem"
 	default:
 		return "unknown"
+	}
+}
+
+func UnmarshalLabel(s string) Label {
+	switch s {
+	case "chaindata":
+		return ChainDB
+	case "txpool":
+		return TxPoolDB
+	case "sentry":
+		return SentryDB
+	case "consensus":
+		return ConsensusDB
+	case "downloader":
+		return DownloaderDB
+	case "inMem":
+		return InMem
+	default:
+		panic(fmt.Sprintf("unexpected label: %s", s))
 	}
 }
 
@@ -303,6 +323,16 @@ type StatelessWriteTx interface {
 type StatelessRwTx interface {
 	StatelessReadTx
 	StatelessWriteTx
+}
+
+// PendingMutations in-memory storage of changes
+// Later they can either be flushed to the database or abandon
+type PendingMutations interface {
+	StatelessRwTx
+	// Flush all in-memory data into `tx`
+	Flush(ctx context.Context, tx RwTx) error
+	Close()
+	BatchSize() int
 }
 
 // Tx

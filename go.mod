@@ -1,6 +1,6 @@
 module github.com/gateway-fm/cdk-erigon-lib
 
-go 1.19
+go 1.21
 
 require (
 	github.com/erigontech/mdbx-go v0.27.24
