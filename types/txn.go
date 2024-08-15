@@ -99,6 +99,7 @@ type TxSlot struct {
 	Creation       bool     // Set to true if "To" field of the transaction is not set
 	Type           byte     // Transaction type
 	Size           uint32   // Size of the payload
+	To             common.Address
 }
 
 const (
@@ -233,6 +234,7 @@ func (ctx *TxParseContext) ParseTransaction(payload []byte, pos int, slot *TxSlo
 	}
 	// Next follows the destination address (if present)
 	dataPos, dataLen, err = rlp.String(payload, p)
+	slot.To = common.BytesToAddress(payload[dataPos : dataPos+dataLen])
 	if err != nil {
 		return 0, fmt.Errorf("%w: to len: %s", ErrParseTxn, err) //nolint
 	}
