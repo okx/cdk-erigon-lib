@@ -463,6 +463,8 @@ const (
 	JUST_UNWOUND                      = "just_unwound"                      // batch number -> true
 	PLAIN_STATE_VERSION               = "plain_state_version"               // batch number -> true
 	ERIGON_VERSIONS                   = "erigon_versions"                   // erigon version -> timestamp of startup
+	DISCARDED_TRANSACTIONS_BY_BLOCK   = "discarded_transactions_by_block"   // mapping blockNum -> [txHash, ...]
+	DISCARDED_TRANSACTIONS_BY_HASH    = "discarded_transactions_by_hash"    // mapping txHash -> blockNum
 	TableSmt                          = "HermezSmt"
 	TableStats                        = "HermezSmtStats"
 	TableAccountValues                = "HermezSmtAccountValues"
@@ -654,6 +656,8 @@ var ChaindataTables = []string{
 	JUST_UNWOUND,
 	PLAIN_STATE_VERSION,
 	ERIGON_VERSIONS,
+	DISCARDED_TRANSACTIONS_BY_BLOCK,
+	DISCARDED_TRANSACTIONS_BY_HASH,
 	TableSmt,
 	TableStats,
 	TableAccountValues,
