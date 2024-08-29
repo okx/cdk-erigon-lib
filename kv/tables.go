@@ -442,9 +442,7 @@ const (
 	BLOCK_L1_INFO_TREE_INDEX_PROGRESS = "block_l1_info_tree_progress"       // block number -> l1 info tree progress
 	L1_INJECTED_BATCHES               = "l1_injected_batches"               // index increasing by 1 -> injected batch for the start of the chain
 	BLOCK_INFO_ROOTS                  = "block_info_roots"                  // block number -> block info root hash
-	L1_BLOCK_HASHES                   = "l1_block_hashes"                   // l1 block hash -> true
 	BLOCK_L1_BLOCK_HASHES             = "block_l1_block_hashes"             // block number -> l1 block hash
-	L1_BLOCK_HASH_GER                 = "l1_block_hash_ger"                 // l1 block hash -> GER
 	INTERMEDIATE_TX_STATEROOTS        = "hermez_intermediate_tx_stateRoots" // l2blockno -> stateRoot
 	BATCH_WITNESSES                   = "hermez_batch_witnesses"            // batch number -> witness
 	BATCH_COUNTERS                    = "hermez_batch_counters"             // batch number -> counters
@@ -635,9 +633,7 @@ var ChaindataTables = []string{
 	BLOCK_L1_INFO_TREE_INDEX_PROGRESS,
 	L1_INJECTED_BATCHES,
 	BLOCK_INFO_ROOTS,
-	L1_BLOCK_HASHES,
 	BLOCK_L1_BLOCK_HASHES,
-	L1_BLOCK_HASH_GER,
 	INTERMEDIATE_TX_STATEROOTS,
 	BATCH_WITNESSES,
 	BATCH_COUNTERS,
